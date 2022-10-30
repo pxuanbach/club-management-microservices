@@ -1,0 +1,34 @@
+import React, { lazy } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import MicroFrontend from "./components/MicroFrontend";
+import NotFound from "./components/NotFound";
+
+const userAdminHost = process.env.REACT_APP_USER_ADMIN_HOST;
+const clubAdminHost = process.env.REACT_APP_CLUB_ADMIN_HOST;
+
+const Main = () => {
+    return (
+        <h1>Hello World!</h1>
+    )
+}
+
+const UserAdmin = ({ history }) => (
+    <MicroFrontend history={history} host={userAdminHost} name="UserAdmin" />
+);
+
+const ClubAdmin = ({ history }) => (
+    <MicroFrontend history={history} host={clubAdminHost} name="ClubAdmin" />
+);
+
+const ContainerRoutes = () => {
+    return (
+        <Routes>
+            <Route exact path="/" element={<Main/>}/>
+            <Route path="/user-admin" element={<UserAdmin/>} />
+            <Route path="/club-admin" element={<ClubAdmin/>} />
+            <Route path="*" element={<NotFound/>} />
+        </Routes>
+    )
+};
+
+export default ContainerRoutes;
