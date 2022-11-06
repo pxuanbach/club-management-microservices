@@ -15,7 +15,7 @@ async_session_maker = sessionmaker(
 )
 
 # We still have a second old style sync SQLAlchemy engine for shell and alembic
-engine = create_engine(settings.DATABASE_URL, future=True)
+engine = create_engine(settings.USERS_DATABASE_URL, future=True)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 mapper_registry = registry()

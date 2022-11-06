@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:12
+    restart: always
+    env_file: .env
+    volumes:
+      - app-db-data:/var/lib/postgresql/data:cached
+    ports:
+    - "54321:5432"
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 3s
+      timeout: 2s
+      retries: 3
+
+  users:
+    build: "./users"
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./users/:/app:delegated
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn --port 8001 --host 0.0.0.0 --reload main:app
+
+
+volumes:
+  app-db-data:
