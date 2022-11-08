@@ -9,7 +9,7 @@ from models import Users
 from schemas import UserCreate, UserUpdate
 
 
-class CRUDUser():
+class CRUD():
     async def get_by_username(
         self, db: AsyncSession, username: str
     ) -> Optional[Users]:
@@ -52,12 +52,16 @@ class CRUDUser():
         )
         return datas
 
-    async def create(self, db: AsyncSession, *, obj_in: UserCreate) -> Users:
-        obj_in_data = jsonable_encoder(obj_in)
-        db_obj = Users(**obj_in_data)  # type: ignore
-        db.add(db_obj)
+    async def create(self, db: AsyncSession, obj_in: UserCreate) -> Users:
+        hashed_password = get_password_hash(obj_in.password)
+        create_data = obj_in.dict(exclude={"password"}, exclude_unset=True)
+        user = Users(
+            **create_data,
+            hashed_password=hashed_password,
+        )
+        db.add(user)
         await db.commit()
-        return db_obj
+        return user
 
     async def update(
         self,
@@ -79,9 +83,9 @@ class CRUDUser():
         return db_obj
 
     async def delete(self, db: AsyncSession, *, id: Any) -> Users:
-        obj = await db.get(Users, id)
-        await db.delete(obj)
-        await db.commit()
+        # obj = await db.get(Users, id)
+        # await db.delete(obj)
+        # await db.commit()
         return 
 
     async def authenticate(self, db: AsyncSession, username: str, password: str) -> Optional[Users]:

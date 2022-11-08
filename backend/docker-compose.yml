@@ -8,7 +8,7 @@ services:
     volumes:
       - app-db-data:/var/lib/postgresql/data:cached
     ports:
-    - "54321:5432"
+    - "54321:54321"
     healthcheck:
       test: pg_isready -U postgres
       interval: 3s
@@ -17,16 +17,21 @@ services:
 
   users:
     build: "./users"
-    ports:
-      - "8001:8001"
     volumes:
       - ./users/:/app:delegated
     env_file: .env
     depends_on:
       postgres:
         condition: service_healthy
-    command: uvicorn --port 8001 --host 0.0.0.0 --reload main:app
 
+  clubs:
+    build: "./clubs"
+    volumes:
+      - ./clubs/:/app:delegated
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   app-db-data:

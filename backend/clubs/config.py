@@ -8,8 +8,7 @@ class Settings(BaseSettings):
     #     env_file = ".env"
     #     env_file_encoding = "utf-8"
     API_PATH: str = "/api/v1"
-    SECRET_KEY: str = "1"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 360
+    SECRET_KEY: str
     DATABASE_URL: PostgresDsn
     ASYNC_DATABASE_URL: Optional[PostgresDsn]
 
@@ -26,12 +25,8 @@ class Settings(BaseSettings):
         v = values["DATABASE_URL"]
         return v.replace("postgresql", "postgresql+asyncpg") if v else v
 
-    ADMIN_USERNAME: str 
-    ADMIN_PASSWORD: str 
-
     CLOUDINARY_NAME: str
     CLOUDINARY_API_KEY: str
     CLOUDINARY_API_SECRET: str
-
 
 settings = Settings()

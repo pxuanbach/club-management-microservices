@@ -10,7 +10,7 @@ from models import Users
 
 
 engine = create_engine(
-    settings.USERS_DATABASE_URL,
+    settings.DATABASE_URL,
 )
 SessionLocal = sessionmaker(
     autocommit=False,

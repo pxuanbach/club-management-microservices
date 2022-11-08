@@ -1,12 +1,14 @@
 from datetime import timedelta
+import json
 from typing import Any, List
 import uuid
-from fastapi import APIRouter, status, Depends, HTTPException, Body
+from fastapi import APIRouter, status, Depends, HTTPException, Body, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from crud import CRUDUser
+from utils import upload_file
+from crud import CRUD
 from auth import verify_password, get_password_hash, create_access_token
 from deps.db import get_async_session
 from deps.user import get_current_active_user, get_current_superuser
@@ -15,7 +17,7 @@ from schemas import User as UserSchema, UserCreate, UserUpdate, Token
 
 
 router = APIRouter(prefix=settings.API_PATH)
-crud_user = CRUDUser()
+crud = CRUD()
 
 
 @router.post(
@@ -30,7 +32,7 @@ async def login_for_access_token(
     """
     OAuth2 compatible token login, get an access token for future requests
     """
-    user_in_db: Users = await crud_user.authenticate(
+    user_in_db: Users = await crud.authenticate(
         session, form_data.username, form_data.password
     )
     if not user_in_db:
@@ -57,7 +59,7 @@ async def login_for_access_token(
     """
     Authorize in Swagger UI
     """
-    user_in_db: Users = await crud_user.authenticate(session, form_data.username, form_data.password)
+    user_in_db: Users = await crud.authenticate(session, form_data.username, form_data.password)
     if not user_in_db:
         get_password_hash("ádasdkasdn")
         raise HTTPException(
@@ -88,17 +90,17 @@ async def verify_token(
 @router.get(
     "/users",
     status_code=status.HTTP_200_OK,
-    response_model=List[UserSchema]
+    response_model=List[UserSchema],
 )
 async def get_users(
     # request_params: RequestParams = Depends(parse_common_params(Users)),
     session: AsyncSession = Depends(get_async_session),
-    user: Users = Depends(get_current_superuser),
+    # user: Users = Depends(get_current_superuser),
 ) -> Any:
     """
     Superuser get all users
     """
-    users = await crud_user.get_multi(session)
+    users = await crud.get_multi(session)
     return users
 
 
@@ -113,6 +115,7 @@ async def get_me(
     """
     Get current user.
     """
+    return user
 
 
 
@@ -130,13 +133,13 @@ async def get_user_by_id(
     Get a specific user by id.
     Just superuser or own user.
     """
-    user = await crud_user.get(session, user_id)
+    user = await crud.get(session, user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Người dùng không tồn tại.",
         )
-    return 
+    return user
 
 
 @router.post(
@@ -152,14 +155,14 @@ async def create_user(
     """
     Superuser create user
     """
-    user = await crud_user.get_by_username(session, username=user_in.username)
+    user = await crud.get_by_username(session, username=user_in.username)
     if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Tài khoản đã tồn tại.",
         )
-    user = await crud_user.create(session, user_in)
-    return 
+    user = await crud.create(session, obj_in=user_in)
+    return user
 
 
 @router.patch(
@@ -174,16 +177,16 @@ async def update_user_by_id(
 ) -> Any:
     """
     Update a specific user by id.
-    Just superuser or own user.
+    Just superuser.
     """
-    user = await crud_user.get(session, current_user.id)
+    user = await crud.get(session, current_user.id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Người dùng không tồn tại.",
         )
-    user = await crud_user.update(session, db_obj=user, obj_in=user_in)
-    return
+    user = await crud.update(session, db_obj=user, obj_in=user_in)
+    return user
 
 
 @router.patch(
@@ -199,16 +202,36 @@ async def update_user_by_id(
 ) -> Any:
     """
     Update a specific user by id.
-    Just superuser or own user.
     """
-    user = await crud_user.get(session, user_id)
+    user = await crud.get(session, user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Người dùng không tồn tại.",
         )
-    user = await crud_user.update(session, db_obj=user, obj_in=user_in)
-    return
+    user = await crud.update(session, db_obj=user, obj_in=user_in)
+    return user
+
+
+@router.patch(
+    "/users/me/avatar",
+    status_code=status.HTTP_200_OK,
+    response_model=UserSchema,
+)
+async def update_user_avatar(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_async_session),
+    current_user: Users = Depends(get_current_active_user),
+) -> Any:
+    user = await crud.get(session, current_user.id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Người dùng không tồn tại.",
+        )
+    img_url = await upload_file(file)
+    user = await crud.update(session, db_obj=user, obj_in=UserUpdate(img_url=img_url))
+    return user
 
 
 @router.delete(
@@ -220,11 +243,12 @@ async def delete_user_by_id(
     session: AsyncSession = Depends(get_async_session),
     current_user: Users = Depends(get_current_superuser),
 ) -> Any:
-    user = await crud_user.get(session, user_id)
+    user = await crud.get(session, user_id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Người dùng không tồn tại.",
         )
-    await crud_user.delete(session, user)
+    await crud.delete(session, id=user_id)
     return "Xóa người dùng thành công."
+    

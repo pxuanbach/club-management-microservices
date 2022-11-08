@@ -12,6 +12,7 @@ class UserBase(BaseModel):
     description: Optional[str] = None
     gender: Optional[Literal["Nam", "Nữ", "Khác"]] = None
     phone: Optional[str] = None
+    img_url: Optional[str] = None
 
 
 # Properties to receive via API on creation
