@@ -17,7 +17,7 @@ const Header = (pathName) => (
                 <Tooltip title="Câu lạc bộ của tôi" placement="right-start">
                     <Link
                         className={pathName === 'clubs' ? 'selected' : ''}
-                        to="/club-admin">
+                        to="/my-club">
                         <i class="fa-solid fa-users"></i>
                     </Link>
                 </Tooltip>
@@ -41,7 +41,7 @@ const Header = (pathName) => (
                         <Tooltip title="Quản lý tài khoản" placement="right-start">
                             <Link
                                 className={pathName === 'mng-account' ? 'selected' : ''}
-                                to='/mng-account'>
+                                to='/user-admin'>
                                 <i class="fa-solid fa-user-gear"></i>
                             </Link>
                         </Tooltip>

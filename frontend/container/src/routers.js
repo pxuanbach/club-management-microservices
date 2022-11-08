@@ -5,6 +5,7 @@ import NotFound from "./components/NotFound";
 
 const userAdminHost = process.env.REACT_APP_USER_ADMIN_HOST;
 const clubAdminHost = process.env.REACT_APP_CLUB_ADMIN_HOST;
+const myClubHost = process.env.REACT_APP_MY_CLUB_HOST;
 
 const Main = () => {
     return (
@@ -23,12 +24,16 @@ const ClubAdmin = ({ history }) => (
     <MicroFrontend history={history} host={clubAdminHost} name="ClubAdmin" />
 );
 
+const MyClub = ({history}) => {
+    <MicroFrontend history={history} host={myClubHost} name="MyClub" />
+}
 const ContainerRoutes = () => {
     return (
         <Routes>
             <Route exact path="/" element={<Main/>}/>
             <Route path="/user-admin" element={<UserAdmin/>} />
-            <Route path="/club-admin" element={<ClubAdmin/>} />
+            <Route path="/club-admin" element={<ClubAdmin/>} /> 
+            <Route path="/my-club" element={<MyClub/>} />
             <Route path="*" element={<NotFound/>} />
         </Routes>
     )
