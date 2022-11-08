@@ -24,9 +24,9 @@ const ClubAdmin = ({ history }) => (
     <MicroFrontend history={history} host={clubAdminHost} name="ClubAdmin" />
 );
 
-const MyClub = ({history}) => {
+const MyClub = ({history}) => (
     <MicroFrontend history={history} host={myClubHost} name="MyClub" />
-}
+);
 const ContainerRoutes = () => {
     return (
         <Routes>

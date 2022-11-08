@@ -1,38 +1,136 @@
-.App {
-  text-align: center;
+.div-header{
+  position: fixed;
+  display: flex;
+  width: 100%;
+  height: 55px;
+  background-color: #E3E3E3;
+  align-items: center;
+  box-shadow: 1px 2px 10px rgb(0 0 0 / 25%);
+  z-index: 998;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.div-search{
+  display: flex;
+  width: 350px;
+  height: 40px;
+  background-color: #ffffff;
+  margin-left: 20px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.div-search input{
+  border: none;
+  box-sizing: border-box;
+  width: 100%;
+  margin-left: 20px;
+  padding-right: 20px;
+  outline: none;
+  
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.div-search > i{
+  font-size: 1.2rem;
+  margin-right: 15px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.div-body{
+  padding-top: 55px;
   display: flex;
   flex-direction: column;
+}
+.header-body{
+  display: flex;
+}
+.div-btnadd{
+  display: flex;
+  cursor: pointer;
+}
+.btnAdd{
+  position: absolute;
+  margin-top: 20px;
+  width: 180px;
+  height: 45px;
+  right: 40px;
+  border-radius: 5px;
+  border: none;
+  background-color: #1B264D;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+.div-btnadd > i{
+  font-size: 1.3rem;
+  color: #ffffff;
+  position: absolute;
+  right: 190px;
+  margin-top: 32px;
+  
+  
+  
+}
+.header-title{
+  margin-top: 25px;
+  margin-left: 40px;
+  font-size: 25px;
+  color: #1B264D;
+  font-weight: 700;
+
+}
+.div-card-team{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px 10px 30px 40px;
+}
+.div-card-team a{
+  margin-right: 40px;
+  margin-bottom: 40px;
+}
+.card-team{
+  position: relative;
+  width: 220px;
+  padding: 20px 0px 2px 0px;
+  background-color: #E3E3E3;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  border-radius: 5px;
+  box-shadow: 1px 2px 10px rgb(0 0 0 / 25%);
+  cursor: pointer;
 }
-
-.App-link {
-  color: #61dafb;
+.card-team > a{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 85%;
+  align-items: center;
+  
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.card-team > i{
+  font-size: 1.4rem;
+  margin-left: 150px;
+  margin-top: 15px;
+}
+.div-menu{
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.icon-menu{
+  color: #1B264D;
+  
+}
+.image-team{
+  width: 110px;
+  height: 110px;
+  background-color: #ffffff;
+  margin-top: 15px;
+  border-radius: 50%;
+}
+.name-team{
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 18px;
+  color: #1B264D;
+  font-weight: 700;
+  margin-top: 10px;
+  text-align: center;
 }
