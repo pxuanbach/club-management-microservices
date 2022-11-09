@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react'
 import './App.css';
 import { Box, Modal, Alert, Snackbar } from '@mui/material';  
 import ClubItem from './ClubItem';
+import AddClub from './modal/AddClub';
+
 const style = {
   position: 'absolute',
   top: '45%',
@@ -13,9 +15,29 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
 function App() {
+
+  const [showFormAddClub, setShowFormAddClub] = useState(false);
   return (
     <div>
+      <Modal
+        open={showFormAddClub}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        onClose={() => {
+          setShowFormAddClub(false);
+        }}
+      >
+        <Box sx={style}>
+          <AddClub
+            // setShowFormAdd={setShowFormAddClub}
+            // clubs={clubs}
+            // setClubs={setClubs}
+            // showSnackbar={showSnackbar}
+          />
+        </Box>
+      </Modal>
       <div className='div-header'>
         <div className='div-search'>
           <input
@@ -33,7 +55,7 @@ function App() {
           <div className='header-title'> Câu lạc bộ của bạn</div>
           
             <div className='div-btnadd'>
-              <button className='btnAdd' >Tạo câu lạc bộ</button>
+              <button onClick={() => setShowFormAddClub(true)} className='btnAdd' >Tạo câu lạc bộ</button>
               <i class="fa-solid fa-plus"></i>
             </div>
         </div>

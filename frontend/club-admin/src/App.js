@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   Avatar, TextField, Button, Tooltip, Box,
@@ -9,6 +9,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import "./App.css"
+import AddClub from './modal/AddClub';
 const CustomTextField = styled(TextField)({
   '& label.Mui-focused': {
     color: '#1B264D',
@@ -29,6 +30,8 @@ const style = {
   p: 3,
 };
 function App() {
+
+  const [showFormAdd, setShowFormAdd] = useState(false);
 
   const columns = [
     { field: 'id', headerName: 'ID', headerAlign: 'center',align: 'center',flex: 0.5,disableColumnMenu: true, },
@@ -110,6 +113,23 @@ function App() {
   
   return (
     <div className="container">
+      <Modal
+        open={showFormAdd}
+        aria-labelledby="modal-add-title"
+        aria-describedby="modal-add-description"
+        onClose={() => {
+          setShowFormAdd(false);
+        }}
+      >
+        <Box sx={style}>
+          <AddClub
+            setShowFormAdd={setShowFormAdd}
+            // clubs={clubs}
+            // setClubs={setClubs}
+            // showSnackbar={showSnackbar}
+          />
+        </Box>
+      </Modal>
       <div className='mng__header'>
         <h2>Quản lý các câu lạc bộ</h2>
         <div className='header__stack'>
@@ -150,9 +170,8 @@ function App() {
               variant="contained"
               disableElevation
               startIcon={<i class="fa-solid fa-plus"></i>}
-              // onClick={handleOpenAdd}
-              >
-              Thêm tài khoản mới
+              onClick={() => { setShowFormAdd(true) }}>
+              Tạo câu lạc bộ mới
             </Button>
             {/* <Button
               style={{ background: '#1B264D' }}

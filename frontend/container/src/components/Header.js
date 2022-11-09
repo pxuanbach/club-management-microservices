@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip'
 import logo_web from "../assets/logoweb.png";
 import Avatar from '@mui/material/Avatar';
-import "./Navbar"
+import "./Navbar.css"
 const Header = (pathName) => (
   <div className='nav-menu'>
             <div className='list-btn'>
