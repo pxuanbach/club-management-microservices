@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-// import '../App.css'
+import './AddAccount.css'
 
 
 const AddAccount = ({ handleClose, users, setUsers, showSnackbar }) => {
@@ -111,7 +111,7 @@ const AddAccount = ({ handleClose, users, setUsers, showSnackbar }) => {
                     <div className='modal-avatar'>
                             <input type="file" />
                             <Avatar className='avatar'
-                                sx={{ height: avatarHeight, width:avatarHeight }}
+                                sx={{ height: avatarHeight }}
                                 onClick={() => { inputAvatarImage.current.click() }}
                                 >
                                 Ảnh đại diện
@@ -186,7 +186,7 @@ const AddAccount = ({ handleClose, users, setUsers, showSnackbar }) => {
                             // disabled={isSuccess}
                             variant="outlined"
                             disableElevation
-                            // onClick={handleClose}
+                            onClick={handleClose}
                             >
                             Hủy
                         </Button>
