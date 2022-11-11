@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  container:
+    build:
+      context: "./container"
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./container/src:/app/src:delegated
+    env_file:
+      - ./container/.env
+
+  club-admin:
+    build:
+      context: "./club-admin"
+    ports:
+      - "4002:4002"
+    volumes:
+      - ./club-admin/src:/app/src:delegated
+
+  user-admin:
+    build:
+      context: "./user-admin"
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./user-admin/src:/app/src:delegated
+
+volumes:
+  app-db-data:
