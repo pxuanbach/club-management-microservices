@@ -1,0 +1,62 @@
+:root{
+    --primary-color: #1B264D;
+    --secondary-color: #E3E3E3;
+    --background-color: #fff;
+    --accent-color: #5FE321;
+}
+
+.container{
+    padding: 20px;
+    height: 100vh;
+}
+.mng__header h2{
+    width: max-content;
+    text-transform: uppercase;
+    font-size: 30px;
+    /* font-family: 'Times New Roman', Times, serif; */
+    color: #1B264D;
+    margin-bottom: 30px;
+    border-bottom: 4px solid #1B264D;
+}
+.header__stack{
+    margin-bottom: 55px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+.stack-left{
+    display: flex;
+    align-items: flex-end;
+}
+#search-field{
+    min-width: 300px;
+    font-size: 16px;
+}
+.btn-search i{
+    color: #1B264D;
+    font-size: 18px;
+}
+.stack-right{
+    display: flex;
+    justify-content: flex-end;
+}
+.stack-right button{
+ margin-right: 10px;
+}
+.stack-right button:last-child{
+    margin-right: 0px;
+}
+
+#modal-modal-title{
+    color: #1B264D;
+    margin-bottom: 30px;
+}
+#modal-modal-description{
+    display: flex;
+}
+.modal-form{
+    flex: 0.7;
+    min-width: 320px;
+    display: grid;
+    gap: 20px;   
+}

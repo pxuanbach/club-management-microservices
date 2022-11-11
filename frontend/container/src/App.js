@@ -1,15 +1,15 @@
 import React, { Suspense } from "react";
 import { BrowserRouter } from 'react-router-dom';
 
-import Header from "./components/Header";
+import Navbar from "./components/Navbar";
 import ContainerRoutes from "./routers";
-
+import "./App.css"
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Suspense fallback={<span>Loading...</span>}>
-          <Header></Header>
+          <Navbar/>
           <ContainerRoutes/>
         </Suspense>
       </BrowserRouter>
