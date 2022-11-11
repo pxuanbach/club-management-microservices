@@ -10,11 +10,12 @@ from config import settings
 from constants import event_type_constants
 from utils import upload_file
 from crud import CRUD
-from auth import verify_password, get_password_hash, create_access_token
+from auth import verify_password, get_password_hash, create_access_token, verify_access_token
 from deps.db import get_async_session
 from deps.user import get_current_active_user, get_current_superuser
+from deps.request_params import parse_common_params
 from models import Users
-from schemas import User as UserSchema, UserCreate, UserUpdate, Token
+from schemas import User as UserSchema, UserCreate, UserUpdate, Token, RequestParams
 from event_handler import send_event
 
 
@@ -86,7 +87,11 @@ async def verify_token(
     """
     Verify token
     """
-    return 
+    payload = await verify_access_token(token)
+    user = await crud.get(session, payload.id)
+    if not user:
+        raise HTTPException(404, detail="Tiêu chí xác thực không hợp lệ.")
+    return user
 
 
 @router.get(
@@ -95,14 +100,14 @@ async def verify_token(
     response_model=List[UserSchema],
 )
 async def get_users(
-    # request_params: RequestParams = Depends(parse_common_params(Users)),
+    request_params: RequestParams = Depends(parse_common_params(Users)),
     session: AsyncSession = Depends(get_async_session),
     # user: Users = Depends(get_current_superuser),
 ) -> Any:
     """
     Superuser get all users
     """
-    users = await crud.get_multi(session)
+    users = await crud.get_multi(session, request_params)
     return users
 
 

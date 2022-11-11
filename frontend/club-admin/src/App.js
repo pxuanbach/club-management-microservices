@@ -8,8 +8,11 @@ import { styled } from '@mui/material/styles';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import "./App.css"
 import AddClub from './modal/AddClub';
+import axiosInstance from './AxiosInstance'
+import SeverityOptions from './SeverityOptions';
+import "./App.css"
+
 const CustomTextField = styled(TextField)({
   '& label.Mui-focused': {
     color: '#1B264D',
@@ -29,26 +32,36 @@ const style = {
   boxShadow: 24,
   p: 3,
 };
-function App() {
 
+function App() {
+  const [userSelected, setUserSelected] = useState()
+  const [clubSelected, setClubSelected] = useState()
+  const [openDialog, setOpenDialog] = useState(false);
   const [showFormAdd, setShowFormAdd] = useState(false);
+  const [showFormUpdate, setShowFormUpdate] = useState(false);
+  const [search, setSearch] = useState();
+  const [clubs, setClubs] = useState([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [options, setOptions] = useState();
 
   const columns = [
-    { field: 'id', headerName: 'ID', headerAlign: 'center',align: 'center',flex: 0.5,disableColumnMenu: true, },
-    { field: 'img_url', headerName: 'Hình đại diện',  flex: 0.6 },
-    { field: 'name', headerName: 'Tên câu lạc bộ',  flex: 1.3 },
+    { field: 'id', headerName: 'ID', headerAlign: 'center', align: 'center', flex: 1, disableColumnMenu: true, },
+    {
+      field: 'img_url', align: 'center', headerName: 'Hình đại diện', flex: 0.5,
+      renderCell: (value) => {
+        return (
+          <Avatar src={value.row.img_url} />
+        )
+      }
+    },
+    { field: 'name', headerName: 'Tên câu lạc bộ', flex: 1.3 },
     {
       field: 'leader',
       headerName: "Trưởng câu lạc bộ",
       flex: 1,
     },
-    {
-      field: 'treasurer',
-      headerName: "Thủ quỹ",
-      flex: 1,
-    },
     { field: 'members_num', headerName: "Thành viên", type: 'number', flex: 0.5 },
-    { field: 'fund', headerName: 'Quỹ (VND)', type: 'number', flex: 0.8 },
     {
       field: 'btn-update',
       headerName: '',
@@ -100,17 +113,27 @@ function App() {
       }
     }
   ];
-  
-  const rows = [
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-    { id: 1, img_url: '', name: 'Jon', leader: 'dat', treasurer:'bach',members_num: 10,fund: 1000 },
-  ];
-  
+
+  const showSnackbar = (message, options) => {
+    setOptions(options)
+    setAlertMessage(message)
+    setOpenSnackbar(true)
+  }
+
+  const getListClub = async () => {
+    let res = await axiosInstance.get(`/clubs`, {
+      headers: { 'Content-Type': 'application/json' },
+    })
+    let data = res.data
+    if (data) {
+      setClubs(data)
+    }
+  }
+
+  useEffect(() => {
+    getListClub()
+  }, [])
+
   return (
     <div className="container">
       <Modal
@@ -124,12 +147,20 @@ function App() {
         <Box sx={style}>
           <AddClub
             setShowFormAdd={setShowFormAdd}
-            // clubs={clubs}
-            // setClubs={setClubs}
-            // showSnackbar={showSnackbar}
+            clubs={clubs}
+            setClubs={setClubs}
+            showSnackbar={showSnackbar}
           />
         </Box>
       </Modal>
+      <Snackbar
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={openSnackbar}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert severity={options}>{alertMessage}</Alert>
+      </Snackbar>
       <div className='mng__header'>
         <h2>Quản lý các câu lạc bộ</h2>
         <div className='header__stack'>
@@ -141,15 +172,14 @@ function App() {
               // value={search}
               // onChange={handleChangeSearchField}
               size='small'
-              // onKeyPress={event => event.key === 'Enter' ? handleSearch(event) : null}
+            // onKeyPress={event => event.key === 'Enter' ? handleSearch(event) : null}
             />
-
             <Tooltip title='Tìm kiếm' placement='right-start'>
               <Button
                 className='btn-search'
                 variant="text"
                 disableElevation
-                >
+              >
                 <SearchIcon sx={{ color: '#1B264D' }} />
               </Button>
             </Tooltip>
@@ -158,7 +188,7 @@ function App() {
                 className='btn-refresh'
                 variant="outlined"
                 disableElevation
-                >
+              >
                 <RefreshIcon sx={{ color: '#1B264D' }} />
               </Button>
             </Tooltip>
@@ -193,11 +223,12 @@ function App() {
       </div>
       <div className='mng__body'>
         <DataGrid
-          // getRowId={(r) => r._id}
-          rows={rows}
+          getRowId={(r) => r.id}
+          rows={clubs}
           columns={columns}
           autoHeight
           pageSize={7}
+          sx={{ minHeight: '600px' }}
         />
       </div>
     </div>

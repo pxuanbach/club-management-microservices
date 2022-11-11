@@ -1,12 +1,12 @@
 from typing import Any, Dict, List, Optional, Union
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_
 from fastapi.encoders import jsonable_encoder
 
 from config import settings
 from auth import verify_password, get_password_hash
 from models import Users
-from schemas import UserCreate, UserUpdate
+from schemas import UserCreate, UserUpdate, RequestParams
 
 
 class CRUD():
@@ -38,15 +38,23 @@ class CRUD():
         )
 
     async def get_multi(
-        self, db: AsyncSession
+        self, db: AsyncSession, request_params: RequestParams
     ) -> List[Users]:
-        datas = (
-            (
-                await db.execute(
-                    select(Users)
-                    .where(Users.username != settings.ADMIN_USERNAME)
+        query = (
+            select(Users)
+            .where(Users.username != settings.ADMIN_USERNAME)
+        )
+        if request_params.search:
+            # print(request_params.search)
+            query = query.filter(
+                or_(
+                    func.lower(Users.full_name).contains(request_params.search),
+                    func.lower(Users.email).contains(request_params.search),
+                    func.lower(Users.username).contains(request_params.search),
                 )
             )
+        datas = (
+            (await db.execute(query))
             .scalars()
             .all()
         )

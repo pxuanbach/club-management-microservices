@@ -28,6 +28,7 @@ class UserUpdate(UserBase):
 
 class UserInDBBase(UserBase):
     id: Optional[uuid.UUID] = None
+    username: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -58,3 +59,6 @@ class EventData(BaseModel):
     type: str
     data: Optional[Any]
     
+
+class RequestParams(BaseModel):
+    search: Optional[str] = None
