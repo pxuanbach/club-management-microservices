@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 import uuid
 from pydantic import BaseModel
 
@@ -21,3 +21,9 @@ class Club(ClubCreate):
 
     class Config:
         orm_mode = True
+
+
+class EventData(BaseModel):
+    type: str
+    data: Optional[Any]
+    

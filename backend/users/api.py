@@ -1,12 +1,13 @@
 from datetime import timedelta
-import json
+import requests
 from typing import Any, List
 import uuid
-from fastapi import APIRouter, status, Depends, HTTPException, Body, UploadFile, File
+from fastapi import APIRouter, status, Depends, HTTPException, Body, UploadFile, File, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
+from constants import event_type_constants
 from utils import upload_file
 from crud import CRUD
 from auth import verify_password, get_password_hash, create_access_token
@@ -14,6 +15,7 @@ from deps.db import get_async_session
 from deps.user import get_current_active_user, get_current_superuser
 from models import Users
 from schemas import User as UserSchema, UserCreate, UserUpdate, Token
+from event_handler import send_event
 
 
 router = APIRouter(prefix=settings.API_PATH)
@@ -118,7 +120,6 @@ async def get_me(
     return user
 
 
-
 @router.get(
     "/users/{user_id}", 
     status_code=status.HTTP_200_OK,
@@ -148,6 +149,7 @@ async def get_user_by_id(
     response_model=UserSchema,
 )
 async def create_user(
+    background_task: BackgroundTasks,
     user_in: UserCreate,
     session: AsyncSession = Depends(get_async_session),
     user: Users = Depends(get_current_superuser),
@@ -162,6 +164,15 @@ async def create_user(
             detail="Tài khoản đã tồn tại.",
         )
     user = await crud.create(session, obj_in=user_in)
+    background_task.add_task(
+        send_event,
+        url=settings.EVENT_BUS_URL,
+        event_type=event_type_constants.USER_CREATED,
+        data={
+            "id": str(user.id),
+            "username": user.username
+        } 
+    )
     return user
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 import uuid
 from pydantic import BaseModel, EmailStr
 
@@ -52,3 +52,9 @@ class Token(BaseModel):
 
 class TokenPayload(BaseModel):
     id: Optional[uuid.UUID]
+
+
+class EventData(BaseModel):
+    type: str
+    data: Optional[Any]
+    

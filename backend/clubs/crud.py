@@ -1,10 +1,11 @@
+import uuid
 from typing import Any, Dict, List, Optional, Union
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 from fastapi.encoders import jsonable_encoder
 
 from config import settings
-from models import Clubs
+from models import Clubs, User
 from schemas import ClubCreate, ClubUpdate
 
 
@@ -68,3 +69,13 @@ class CRUD:
         # await db.delete(obj)
         # await db.commit()
         return 
+
+    async def user_created(self, db: AsyncSession, data: dict):
+        # print(type(data), data)
+        user = User(
+            id=uuid.UUID(data.get("id")),
+            username=data.get("username")
+        )
+        db.add(user)
+        await db.commit()
+        return user

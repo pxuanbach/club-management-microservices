@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     DATABASE_URL: PostgresDsn
     ASYNC_DATABASE_URL: Optional[PostgresDsn]
+    EVENT_BUS_URL: str
 
     @validator("DATABASE_URL", pre=True)
     def build_database_url(cls, v: Optional[str], values: Dict[str, Any]):

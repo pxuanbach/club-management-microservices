@@ -15,5 +15,10 @@ services:
       - DATABASE_URL=${CLUBS_DATABASE_URL?Variable not set}
     command: uvicorn --port 8002 --host 0.0.0.0 main:app --reload
 
+  event-bus:
+    ports:
+      - "8005:8005"
+    command: npm start
+
 volumes:
   app-db-data:
