@@ -38,8 +38,8 @@ const FindMember = ({
     // }
     return (
         <div className='add-member'>
-                        <TextField
-                        fullWidth
+                <TextField
+                fullWidth
                 // onChange={handleSearchMembers}
                 id="add-members"
                 variant="outlined"

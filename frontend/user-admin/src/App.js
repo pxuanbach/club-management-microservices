@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import {
   Avatar, TextField, Button, Tooltip, Box,
@@ -9,6 +9,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import "./App.css"
+import AddAccount from './modal/AddAccount';
 const CustomTextField = styled(TextField)({
   '& label.Mui-focused': {
     color: '#1B264D',
@@ -29,6 +30,11 @@ const style = {
   p: 3,
 };
 function App() {
+
+  const [openModalAdd, setOpenModalAdd] = useState(false);
+
+  const handleOpenAdd = () => setOpenModalAdd(true);
+  const handleCloseAdd = () => setOpenModalAdd(false);
 
   const columns = [
     { field: 'id', headerName: 'ID', headerAlign: 'center',align: 'center',flex: 0.5,disableColumnMenu: true, },
@@ -69,6 +75,21 @@ function App() {
   
   return (
     <div className="container">
+      <Modal
+        open={openModalAdd}
+        onClose={handleCloseAdd}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <AddAccount
+            handleClose={handleCloseAdd}
+            // users={users}
+            // setUsers={setUsers}
+            // showSnackbar={showSnackbar}
+          />
+        </Box>
+      </Modal>
       <div className='mng__header'>
         <h2>Quản lý tài khoản</h2>
         <div className='header__stack'>
@@ -109,7 +130,7 @@ function App() {
               variant="contained"
               disableElevation
               startIcon={<i class="fa-solid fa-plus"></i>}
-              // onClick={handleOpenAdd}
+              onClick={handleOpenAdd}
               >
               Thêm tài khoản mới
             </Button>

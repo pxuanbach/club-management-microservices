@@ -119,7 +119,7 @@ const AddClub = ({ setShowFormAdd, clubs, setClubs, showSnackbar }) => {
                 </div>
                 <div className='info'>
                     <div className='div-left'>
-                        <div className='modal-avatar'>
+                        <div club-admin className='modal-avatar'>
                             <input type="file" />
                             <Avatar className='avatar'
                                 sx={{ height: avatarHeight }}
