@@ -3,16 +3,16 @@ from typing import Any, List, Optional
 import uuid
 from fastapi import APIRouter, Form, status, Depends, HTTPException, Body, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.responses import ORJSONResponse
 
 from config import settings
 from utils import upload_file
 from deps.db import get_async_session
+from deps.user import get_current_user
 from crud import CRUD
 from schemas import Club as ClubSchema, ClubCreate, ClubUpdate
 
 
-router = APIRouter(prefix=settings.API_PATH + "/clubs")
+router = APIRouter(prefix="/clubs")
 crud = CRUD()
 
 
@@ -24,7 +24,7 @@ crud = CRUD()
 async def get_clubs(
     # request_params: RequestParams = Depends(parse_common_params(Users)),
     session: AsyncSession = Depends(get_async_session),
-    # user: Users = Depends(get_current_superuser),
+    user = Depends(get_current_user),   # user_id
 ) -> Any:
     """
     Get all clubs
@@ -39,9 +39,22 @@ async def get_clubs(
     response_model=ClubSchema
 )
 async def create_club(
-    club_in: ClubCreate,
+    name: str = Form(...),
+    description: Optional[str] = Form(None),
+    leader: uuid.UUID = Form(...),
+    is_blocked: Optional[bool] = Form(None),
+    file: Optional[UploadFile] = File(None),
     session: AsyncSession = Depends(get_async_session),
+    user = Depends(get_current_user),   # user_id
 ) -> Any:
+    club_in = ClubCreate(
+        name=name,
+        description=description,
+        leader=leader,
+        is_blocked=is_blocked,
+    )
+    if file:
+        club_in.img_url = await upload_file(file)
     club = await crud.create(session, club_in)
     return club
 
@@ -54,6 +67,7 @@ async def create_club(
 async def get_club_by_id(
     club_id: uuid.UUID,
     session: AsyncSession = Depends(get_async_session),
+    user = Depends(get_current_user),   # user_id
 ) -> Any:
     club = await crud.get(session, club_id)
     if not club:
@@ -67,9 +81,9 @@ async def get_club_by_id(
 @router.patch(
     "/{club_id}",
     status_code=status.HTTP_200_OK,
-    response_model=ClubSchema
+    # response_model=ClubSchema
 )
-async def get_club_by_id(
+async def update_club_by_id(
     club_id: uuid.UUID,
     name: Optional[str] = Form(None),
     description: Optional[str] = Form(None),
@@ -77,6 +91,7 @@ async def get_club_by_id(
     is_blocked: Optional[bool] = Form(None),
     file: Optional[UploadFile] = File(None),
     session: AsyncSession = Depends(get_async_session),
+    user = Depends(get_current_user),   # user_id
 ) -> Any:
     club = await crud.get(session, club_id)
     if not club:
@@ -94,3 +109,4 @@ async def get_club_by_id(
         club_in.img_url = await upload_file(file)
     club = await crud.update(session, db_obj=club, obj_in=club_in)
     return club
+    

@@ -34,6 +34,6 @@ async def make_request(
     with async_timeout.timeout(settings.GATEWAY_TIMEOUT):
         async with aiohttp.ClientSession() as session:
             request = getattr(session, method)
-            async with request(url, json=data, headers=headers) as response:
+            async with request(url, data=data, headers=headers) as response:
                 data = await response.json()
                 return (data, response.status)

@@ -1,36 +1,30 @@
-from fastapi import Depends, status, Response
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, status, Response, Request, Header
 from jose import jwt
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from fastapi import HTTPException
 
 from deps.db import get_async_session
-from auth import verify_access_token
 from crud import CRUD
 from config import settings
 from models import Users
 
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_PATH}/auth/token",
-)
 crud = CRUD()
 
 
 async def get_current_user(
-    db: AsyncSession = Depends(get_async_session), token: str = Depends(reusable_oauth2)
+    session: AsyncSession = Depends(get_async_session), request_user_id: str = Header(None)
 ) -> Users:
-    token_payload = await verify_access_token(token)
-    user = await crud.get(db, id=token_payload.id)
+    user = await crud.get(session, request_user_id)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Tiêu chí xác thực không hợp lệ.",
         )
     return user
 
 
-def get_current_active_user(
+async def get_current_active_user(
     current_user: Users = Depends(get_current_user),
 ) -> Users:
     if not crud.is_active(current_user):
@@ -41,7 +35,7 @@ def get_current_active_user(
     return current_user
 
 
-def get_current_superuser(
+async def get_current_superuser(
     current_user: Users = Depends(get_current_user),
 ) -> Users:
     if not crud.is_superuser(current_user):

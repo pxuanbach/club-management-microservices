@@ -7,13 +7,13 @@ class ClubCreate(BaseModel):
     name: str
     description: Optional[str] = None
     leader: uuid.UUID
-    is_blocked: Optional[bool] = None
+    is_blocked: Optional[bool] = False
     img_url: Optional[str] = None
 
 
 class ClubUpdate(ClubCreate):
     name: Optional[str] = None
-    leader: Optional[str] = None
+    leader: Optional[uuid.UUID] = None
 
 
 class Club(ClubCreate):

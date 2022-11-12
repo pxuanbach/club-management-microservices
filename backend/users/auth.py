@@ -29,8 +29,13 @@ def verify_password(plain_password, hashed_password):
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="login")
 
 
-def create_access_token(username: str, user_id: uuid.UUID, expires_delta: Optional[timedelta] = None):
-    encode = {"sub": username, "id": str(user_id)}
+def create_access_token(
+    username: str, 
+    user_id: uuid.UUID, 
+    is_superuser: bool = False, 
+    expires_delta: Optional[timedelta] = None
+):
+    encode = {"sub": username, "id": str(user_id), "is_superuser": is_superuser}
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:

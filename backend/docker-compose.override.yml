@@ -19,6 +19,11 @@ services:
     ports:
       - "8005:8005"
     command: npm start
+  
+  gateway:
+    ports:
+      - "8000:8000"
+    command: uvicorn --port 8000 --host 0.0.0.0 main:app --reload
 
 volumes:
   app-db-data:

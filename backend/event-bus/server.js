@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const axiosInstance = require('./axiosConfig');
 var cors = require('cors');
 
-const { urlStore, serviceUrlMap } = require('./store');
+const { serviceUrlMap } = require('./config');
 const httpLogger = require('./httpLogger');
 const logger = require('./logger')
 
@@ -18,12 +18,11 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json());
 app.use(httpLogger);
 
-app.post("/events", async (req, res) => {
+app.post("/api/v1/events", async (req, res) => {
     const event = req.body;
     // console.log(req)
-
-    urlStore.map(url => {
-        axiosInstance.post(url, event)
+    serviceUrlMap.map(url => {
+        axiosInstance.post(url + "/api/v1/events", event)
         logger.info(`POST ${url}`)
     })
     res.send({ detail: "OK" });

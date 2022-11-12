@@ -1,17 +1,18 @@
+from datetime import timedelta, datetime
 from typing import Optional
 import uuid
 from passlib.context import CryptContext
-from fastapi import status, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from datetime import datetime, timedelta
 from jose import jwt
 from pydantic import ValidationError
+from fastapi import HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
 from config import settings
 from schemas.token import TokenPayload
 
-SECRET_KEY = settings.SECRET_KEY
+
 ALGORITHM = "HS256"
+SECRET_KEY = settings.SECRET_KEY
 
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
@@ -25,9 +26,6 @@ def verify_password(plain_password, hashed_password):
     return bcrypt_context.verify(plain_password, hashed_password)
 
 
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
-
-
 def create_access_token(username: str, user_id: uuid.UUID, expires_delta: Optional[timedelta] = None):
     encode = {"sub": username, "id": str(user_id)}
     if expires_delta:
@@ -38,7 +36,7 @@ def create_access_token(username: str, user_id: uuid.UUID, expires_delta: Option
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-async def verify_access_token(token: str):
+def verify_access_token(token: str):
     payload = None
     try:
         payload = jwt.decode(
@@ -48,6 +46,13 @@ async def verify_access_token(token: str):
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Couldn't validate credentials."
+            detail="Không xác thực được danh tính.",
         )
     return token_payload
+
+def generate_request_header(token_payload: TokenPayload):
+    return {'request-user-id': str(token_payload.id)}
+
+
+def is_admin_user(token_payload: TokenPayload):
+    return bool(token_payload.is_superuser)

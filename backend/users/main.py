@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from api import router as api_router
-from event_handler import router as event_router
+from routers import router
 
 
 app = FastAPI(
@@ -23,8 +22,7 @@ async def root():
     )
 
 
-app.include_router(api_router)
-app.include_router(event_router)
+app.include_router(router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

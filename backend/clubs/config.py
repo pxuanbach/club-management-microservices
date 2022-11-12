@@ -25,7 +25,7 @@ class Settings(BaseSettings):
         """Builds ASYNC_DATABASE_URL from DATABASE_URL."""
         v = values["DATABASE_URL"]
         return v.replace("postgresql", "postgresql+asyncpg") if v else v
-
+    
     CLOUDINARY_NAME: str
     CLOUDINARY_API_KEY: str
     CLOUDINARY_API_SECRET: str

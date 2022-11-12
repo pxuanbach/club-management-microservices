@@ -1,12 +1,15 @@
-import os
 from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 360
-    SECRET_KEY: str = os.environ.get('SECRET_KEY')
-    USERS_SERVICE_URL: str = os.environ.get('USERS_SERVICE_URL')
-    CLUBS_SERVICE_URL: str = os.environ.get('CLUBS_SERVICE_URL')
+    SECRET_KEY: str 
+    USERS_SERVICE_URL: str
+    CLUBS_SERVICE_URL: str
     GATEWAY_TIMEOUT: int = 59
 
 

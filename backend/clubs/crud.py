@@ -5,7 +5,7 @@ from sqlalchemy import func, select
 from fastapi.encoders import jsonable_encoder
 
 from config import settings
-from models import Clubs, User
+from models import Clubs, Users
 from schemas import ClubCreate, ClubUpdate
 
 
@@ -57,6 +57,7 @@ class CRUD:
             update_data = obj_in
         else:
             update_data = obj_in.dict(exclude_unset=True, exclude_none=True)
+            print(update_data)
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
@@ -70,11 +71,34 @@ class CRUD:
         # await db.commit()
         return 
 
+    async def get_user_by_id(self, db: AsyncSession, id: Any) -> Optional[Users]:
+        return (
+            (
+                await db.execute(
+                    select(Users)
+                    .filter(Users.id == id)
+                )
+            )
+            .scalars()
+            .first()
+        )
+
+    async def admin_exist(self, db: AsyncSession, data: dict):
+        admin_id = data.get("id")
+        admin = await db.get(Users, admin_id)
+        if not admin:
+            admin = Users(
+                id=uuid.UUID(admin_id)
+            )
+            db.add(admin)
+            await db.commit()
+        return admin
+
+
     async def user_created(self, db: AsyncSession, data: dict):
         # print(type(data), data)
-        user = User(
+        user = Users(
             id=uuid.UUID(data.get("id")),
-            username=data.get("username")
         )
         db.add(user)
         await db.commit()

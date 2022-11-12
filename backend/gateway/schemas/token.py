@@ -12,3 +12,4 @@ class Token(BaseModel):
 
 class TokenPayload(BaseModel):
     id: Optional[uuid.UUID]
+    is_superuser: Optional[bool]

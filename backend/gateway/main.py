@@ -1,29 +1,18 @@
-from fastapi import Depends, FastAPI, status, Request, Response
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 
-from config import settings
-from core import route
-
-
-app = FastAPI()
+from routers import router
 
 
-@route(
-    request_method=app.post,
-    path='/api/login',
-    status_code=status.HTTP_200_OK,
-    payload_key='form_data',
-    service_url=settings.USERS_SERVICE_URL,
-    authentication_required=False,
-    post_processing_func='post_processing.access_token_generate_handler',
-    response_model='schemas.token.Token'
+app = FastAPI(
+    title="API Gateway",
+    description="Development",
+    version="1.0",
+    default_response_class=ORJSONResponse
 )
-async def login(
-    request: Request, 
-    response: Response,
-    form_data: OAuth2PasswordRequestForm = Depends(), 
-):
-    pass
+
+
+app.include_router(router)
 
 
 if __name__ == "__main__":
