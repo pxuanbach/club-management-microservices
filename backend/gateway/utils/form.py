@@ -31,10 +31,10 @@ class CustomFormData(CustomFormDataStorage):
                 value=bytes_file,
                 content_type=value.content_type,
             )
+        elif isinstance(value, bool):
+            self.add_www_form(name=key, value=value)
         elif isinstance(value, str):
             self.add_www_form(name=key, value=value)
-        elif isinstance(value, bool):
-            self.add_multipart_form(name=key, value=value)
 
 
 async def unzip_form_params(
